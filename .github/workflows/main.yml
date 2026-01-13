@@ -1,0 +1,29 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build + jpackage (Windows)
+        run: mvn clean package -Pwindows
+
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: KeyDust-Windows
+          path: dist/**
