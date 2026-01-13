@@ -110,7 +110,7 @@
                 <version>1.7.3</version>
                 <configuration>
                     <name>KeyDust</name>
-                    <destination>${project.basedir}/dist</destination>
+                    <destination>${project.basedir.directory}/dist</destination>
                     <input>${project.build.directory}</input>
                     <mainJar>${project.build.finalName}-app.jar</mainJar>
                     <mainClass>${app.mainClass}</mainClass>
