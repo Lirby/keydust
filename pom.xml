@@ -51,6 +51,12 @@
             <artifactId>jasypt</artifactId>
             <version>1.9.3</version>
         </dependency>
+         <dependency>
+             <groupId>org.openjfx</groupId>
+             	<artifactId>javafx-base</artifactId>
+                      <version>${javafx.version}</version>
+             <classifier>${javafx.platform}</classifier>
+         </dependency>
     </dependencies>
     <build>
         <resources>
