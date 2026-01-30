@@ -1,4 +1,4 @@
-name: Build Windows MSI
+name: Build Linux DEB
 
 on:
   workflow_dispatch:
@@ -10,18 +10,18 @@ permissions:
   contents: write
 
 jobs:
-  build-msi:
-    runs-on: windows-latest
+  build-deb:
+    runs-on: ubuntu-latest
 
     steps:
       # ------------------------------------------------------------
-      # 1) Repository auschecken
+      # 1) Checkout
       # ------------------------------------------------------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
       # ------------------------------------------------------------
-      # 2) Java 21 + JavaFX (Liberica Full / jdk+fx)
+      # 2) Java 21 + JavaFX (Liberica jdk+fx)
       # ------------------------------------------------------------
       - name: Set up JDK 21 (Liberica + JavaFX)
         uses: actions/setup-java@v4
@@ -32,43 +32,41 @@ jobs:
           cache: maven
 
       # ------------------------------------------------------------
-      # 3) WiX Toolset installieren (MSI ist sonst unmöglich)
+      # 3) DEB tooling
       # ------------------------------------------------------------
-      - name: Install WiX Toolset
-        shell: pwsh
-        run: choco install wixtoolset --no-progress -y
+      - name: Install DEB tooling
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fakeroot dpkg-dev
 
       # ------------------------------------------------------------
-      # 4) Maven Build (JAR + Shade etc.)
+      # 4) Maven package (shade erzeugt -app.jar)
       # ------------------------------------------------------------
       - name: Build project with Maven
-        shell: pwsh
-        run: mvn -B -Pwindows -DskipTests package
+        run: mvn -B -Plinux -DskipTests package
 
       # ------------------------------------------------------------
-      # 5) MSI mit jpackage erzeugen
-      #    (Typ kommt aus pom.xml: <jpackage.type>msi</jpackage.type>)
+      # 5) jpackage -> .deb (Typ kommt aus pom.xml: <jpackage.type>DEB</jpackage.type>)
       # ------------------------------------------------------------
-      - name: Build MSI with jpackage
-        shell: pwsh
-        run: mvn -B -Pwindows -DskipTests jpackage:jpackage
+      - name: Build DEB with jpackage
+        run: mvn -B -Plinux -DskipTests jpackage:jpackage
 
       # ------------------------------------------------------------
-      # 6) MSI als Artifact hochladen
+      # 6) Artifact hochladen
       # ------------------------------------------------------------
-      - name: Upload MSI Artifact
+      - name: Upload DEB Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: KeyDust-Windows-MSI
+          name: KeyDust-Linux-DEB
           path: |
-            dist/**/*.msi
+            dist/**/*.deb
 
       # ------------------------------------------------------------
-      # 7) MSI an GitHub Release anhängen (nur bei Tags)
+      # 7) Bei Tag zusätzlich ans GitHub Release hängen
       # ------------------------------------------------------------
-      - name: Publish MSI to GitHub Release
+      - name: Publish DEB to GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/**/*.msi
+            dist/**/*.deb
