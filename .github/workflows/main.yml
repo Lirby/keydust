@@ -1,0 +1,57 @@
+name: Build Windows MSI
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  msi:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # JDK 21 + JavaFX (Liberica jdk+fx)
+      - name: Set up JDK 21 (Liberica + JavaFX)
+        uses: actions/setup-java@v4
+        with:
+          distribution: liberica
+          java-version: "21"
+          java-package: jdk+fx
+          cache: maven
+
+      # WiX installieren (für MSI-Erstellung mit jpackage)
+      - name: Install WiX Toolset
+        run: choco install wixtoolset --no-progress -y
+
+      - name: Build JAR (Maven)
+        run: mvn -B -Pwindows -DskipTests package
+
+      # MSI via jpackage bauen:
+      # Falls deine pom im Windows-Profil aktuell "--type exe" nutzt, überschreiben wir hier auf MSI.
+      - name: Build MSI (jpackage)
+        run: mvn -B -Pwindows -DskipTests -Djpackage.type=msi jpackage:jpackage
+
+      # Ergebnis als Artifact hochladen (immer hilfreich, auch ohne Release)
+      - name: Upload MSI Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KeyDust-windows-msi
+          path: |
+            dist/**/*.msi
+            dist/**/*.exe
+
+      # OPTIONAL: Wenn der Workflow durch ein Tag (vX.Y.Z) getriggert wurde,
+      # lade die MSI ins GitHub Release hoch.
+      - name: Publish to GitHub Release (tag only)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/**/*.msi
