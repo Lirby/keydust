@@ -5,7 +5,7 @@
 
     <groupId>com.example</groupId>
     <artifactId>Keydust</artifactId>
-    <version>1.0.0rc1</version>
+    <version>1.0.0</version>
 
     <properties>
         <maven.compiler.release>21</maven.compiler.release>
@@ -16,15 +16,61 @@
     <profiles>
         <profile>
             <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
             <properties>
                 <javafx.platform>win</javafx.platform>
+                <jpackage.type>MSI</jpackage.type>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <version>1.7.3</version>
+                        <configuration>
+                            <appVersion>1.0.5</appVersion>
+                            <winMenu>true</winMenu>
+                            <winMenuGroup>KeyDust</winMenuGroup>
+                            <winShortcut>true</winShortcut>
+                            <winPerUserInstall>true</winPerUserInstall>
+                            <winDirChooser>true</winDirChooser>
+                            <vendor>Lirby</vendor>
+                            <description>a Password manager</description>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>linux</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                </os>
+            </activation>
             <properties>
                 <javafx.platform>linux</javafx.platform>
+                <jpackage.type>DEB</jpackage.type>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.panteleyev</groupId>
+                        <artifactId>jpackage-maven-plugin</artifactId>
+                        <version>1.7.3</version>
+                        <configuration>
+                            <linuxPackageName>keydust</linuxPackageName>
+                            <linuxDebMaintainer>Lirby</linuxDebMaintainer>
+                            <linuxShortcut>true</linuxShortcut>
+                            <linuxAppCategory>Utlit</linuxAppCategory>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -51,12 +97,6 @@
             <artifactId>jasypt</artifactId>
             <version>1.9.3</version>
         </dependency>
-         <dependency>
-             <groupId>org.openjfx</groupId>
-             	<artifactId>javafx-base</artifactId>
-                      <version>${javafx.version}</version>
-             <classifier>${javafx.platform}</classifier>
-         </dependency>
     </dependencies>
     <build>
         <resources>
@@ -110,16 +150,22 @@
                 <version>1.7.3</version>
                 <configuration>
                     <name>KeyDust</name>
-                    <destination>${project.basedir.directory}/dist</destination>
+                    <type>${jpackage.type}</type>
+                    <destination>${project.basedir}/dist</destination>
                     <input>${project.build.directory}</input>
+                    <icon>${project.basedir}/src/main/resources/logo.ico</icon>
                     <mainJar>${project.build.finalName}-app.jar</mainJar>
                     <mainClass>${app.mainClass}</mainClass>
                     <addModules>
                         <addModule>javafx.controls</addModule>
                         <addModule>javafx.graphics</addModule>
+                        <addModule>java.sql</addModule>
+                        <addModule>java.logging</addModule>
                     </addModules>
                     <javaOptions>
                         <javaOption>-Xmx512m</javaOption>
+                        <javaOption>-XX:+UseG1GC</javaOption>
+                        <javaOption>-XX:MaxGCPauseMillis=100</javaOption>
                     </javaOptions>
                 </configuration>
             </plugin>

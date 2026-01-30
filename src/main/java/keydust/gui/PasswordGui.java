@@ -4,15 +4,19 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.collections.transformation.SortedList;
 import keydust.contollers.ShowPwdController;
 import keydust.db.SqliteDB;
 import keydust.gui.core.Builder;
@@ -27,6 +31,8 @@ public class PasswordGui extends Stage {
     private final TextField searchField = new TextField();
     private final TableView<CredentialRow> tableView = new TableView<>();
     private final ObservableList<CredentialRow> rows = FXCollections.observableArrayList();
+    private final FilteredList<CredentialRow> filteredRows = new FilteredList<>(rows, r -> true);
+    private final SortedList<CredentialRow> sortedRows = new SortedList<>(filteredRows);
     private final Label feedback = new Label();
     private CredentialRow visibleRow = null;
 
@@ -34,7 +40,7 @@ public class PasswordGui extends Stage {
         this.encryptionPassword = password;
         this.sqlite = sqlite;
 
-        setTitle("KeyDust v1.0 Release Candidate ");
+        setTitle("KeyDust v1.0");
         setScene(buildScene());
         setMinWidth(760);
         setMinHeight(520);
@@ -48,6 +54,11 @@ public class PasswordGui extends Stage {
 
         searchField.setPromptText("Search");
         searchField.getStyleClass().add("input-field");
+        searchField.setOnKeyReleased(event -> {
+            switch (event.getCode()) {
+                case ESCAPE -> searchField.clear();
+            }
+        });
 
         TableColumn<CredentialRow, String> descriptionCol = new TableColumn<>("Description");
         descriptionCol.setCellValueFactory(data -> data.getValue().descriptionProperty());
@@ -70,7 +81,11 @@ public class PasswordGui extends Stage {
         });
 
         tableView.getColumns().addAll(descriptionCol, usernameCol, passwordCol);
-        tableView.setItems(rows);
+
+        sortedRows.comparatorProperty().bind(tableView.comparatorProperty());
+        tableView.setItems(sortedRows);
+        setupSearch();
+
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tableView.setPlaceholder(new Label("No Password yet. Add one to get started."));
 
@@ -83,6 +98,10 @@ public class PasswordGui extends Stage {
         Button editPwd = new Button("Edit Password");
         editPwd.setOnAction(e -> openEditDialog());
 
+        Button copyBtn = new Button("Copy Password");
+        copyBtn.getStyleClass().add("primary");
+        copyBtn.setOnAction(e -> copyPwd() );
+
         Button showPwd = new Button("Show Password");
         showPwd.getStyleClass().add("primary");
         showPwd.setDisable(true);
@@ -90,7 +109,11 @@ public class PasswordGui extends Stage {
 
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             showPwd.setDisable(newSel == null);
-            hidePassword(showPwd);
+            copyBtn.setDisable(newSel == null);
+
+            if (visibleRow != null && visibleRow != newSel) {
+                hidePassword(showPwd);
+            }
         });
 
         HBox leftBtn = new HBox(10, editPwd, addPwd);
@@ -99,7 +122,7 @@ public class PasswordGui extends Stage {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox rightBtn = new HBox(10, showPwd);
+        HBox rightBtn = new HBox(10, copyBtn, showPwd);
         rightBtn.setAlignment(Pos.CENTER_RIGHT);
 
         HBox actions = new HBox(10, leftBtn, spacer, rightBtn);
@@ -122,6 +145,7 @@ public class PasswordGui extends Stage {
         content.setPrefWidth(880);
 
         return Builder.createScene(content, 900, 580);
+
     }
 
     private void openAddDialog() {
@@ -150,6 +174,22 @@ public class PasswordGui extends Stage {
         showFeedback("", "muted");
     }
 
+    private void copyPwd() {
+        CredentialRow selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showFeedback("Select a credential to copy.", "danger-text");
+            return;
+        }
+
+        String rowPwd = selected.getPassword();
+        if (rowPwd == null) rowPwd = "";
+
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(rowPwd);
+        clipboard.setContent(content);
+    }
+
     private void showSelectedPassword(Button showPwd) {
         CredentialRow selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -175,6 +215,25 @@ public class PasswordGui extends Stage {
         visibleRow = null;
         showPwd.setText("Show Password");
         tableView.refresh();
+    }
+
+    public void setupSearch() {
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            final String filter = (newVal == null) ? "" : newVal.trim().toLowerCase();
+
+            filteredRows.setPredicate(r -> {
+                if (filter.isEmpty()) return true;
+
+                String desc = safeLower(r.getDescription());
+                String user = safeLower(r.getUsername());
+
+                return desc.contains(filter) || user.contains(filter);
+            });
+        });
+    }
+
+    private static String safeLower(String s) {
+        return s == null ? "" : s.toLowerCase();
     }
 
     public void refreshTable() {

@@ -217,6 +217,31 @@ table-view .column-header-background {
     -fx-background-color: rgba(96, 165, 250, 0.35);
 }
 
+.check-box {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
 
+.check-box .box {
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(4.7px);
+    -webkit-backdrop-filter: blur(4.7px);
+    border-radius: 6px;
 
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: rgba(255, 255, 255, 0.28);
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+}
 
+.check-box:selected .box {
+    -fx-background-color: rgba(96, 165, 250, 0.35);
+    -fx-border-color: rgba(96, 165, 250, 0.6);
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}

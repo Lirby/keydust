@@ -26,15 +26,16 @@ public class UnlockGui {
 
     public UnlockGui(Stage stage) {
         this.stage = stage;
-        stage.setTitle("KeyDust v1.0 Release Candidate");
+        stage.setTitle("KeyDust v1.0");
         stage.setScene(buildScene());
         stage.setResizable(false);
         stage.centerOnScreen();
     }
 
     private Scene buildScene() {
-        Label title = new Label("KeyDust 1.0 rc");
+        Label title = new Label("KeyDust 1.0");
         title.getStyleClass().add("heading");
+        title.setStyle("-fx-font-size: 32px;");
 
         Label subtitle = new Label("Database:");
         subtitle.getStyleClass().add("subtitle");

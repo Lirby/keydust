@@ -25,15 +25,10 @@ public final class Builder {
     }
 
     private static void loadStyles(Scene scene) {
-        URL stylesheet = Builder.class.getResource("theme.css");
+        URL stylesheet = Builder.class.getResource("/css/theme.css");
         if (stylesheet != null) {
             scene.getStylesheets().add(stylesheet.toExternalForm());
             return;
-        }
-
-        Path fallback = Paths.get("src/main/resources/css/theme.css");
-        if (Files.exists(fallback)) {
-            scene.getStylesheets().add(fallback.toUri().toString());
         }
     }
 

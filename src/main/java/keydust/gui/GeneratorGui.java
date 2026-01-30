@@ -11,22 +11,42 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import keydust.contollers.PwdGeneratorController;
+import keydust.gui.core.Builder;
 
 import java.util.function.Consumer;
 
 public final class GeneratorGui extends Stage {
 
+    private final Consumer<String> onPasswordGenerated;
+
     public GeneratorGui(Stage owner, Consumer<String> onPasswordGenerated) {
+        this.onPasswordGenerated = onPasswordGenerated;
+
         initOwner(owner);
         initModality(Modality.APPLICATION_MODAL);
         setTitle("Password Generator");
+        setScene(buildScene());
+        setResizable(false);
+    }
+
+    private Scene buildScene() {
+        Label title = new Label("Password length:");
+        title.getStyleClass().add("muted");
 
         TextField lengthField = new TextField("12");
+        lengthField.getStyleClass().add("input-field");
 
         CheckBox upperBox = new CheckBox("Uppercase (A-Z)");
+        upperBox.getStyleClass().add("check-box");
+
         CheckBox lowerBox = new CheckBox("Lowercase (a-z)");
+        lowerBox.getStyleClass().add("check-box");
+
         CheckBox numberBox = new CheckBox("Numbers (0-9)");
+        numberBox.getStyleClass().add("check-box");
+
         CheckBox specialBox = new CheckBox("Special characters");
+        specialBox.getStyleClass().add("check-box");
 
         upperBox.setSelected(true);
         lowerBox.setSelected(true);
@@ -35,12 +55,17 @@ public final class GeneratorGui extends Stage {
 
         TextField genPwdField = new TextField();
         genPwdField.setEditable(false);
+        genPwdField.getStyleClass().add("input-field");
 
         javafx.scene.control.Label errorLabel = new Label();
         errorLabel.getStyleClass().add("danger-text");
 
         Button generateBtn = new Button("Generate");
+        generateBtn.getStyleClass().add("primary");
+
         Button useBtn = new Button("Use Password");
+        useBtn.getStyleClass().add("primary");
+
         Button cancelBtn = new Button("Cancel");
 
         generateBtn.setOnAction(e -> {
@@ -76,7 +101,7 @@ public final class GeneratorGui extends Stage {
 
         VBox root = new VBox(
                 10,
-                new Label("Password length:"),
+                title,
                 lengthField,
                 upperBox,
                 lowerBox,
@@ -89,6 +114,6 @@ public final class GeneratorGui extends Stage {
 
         root.setPadding(new Insets(15));
 
-        setScene(new Scene(root, 380, 420));
+        return Builder.createScene(root, 380, 420);
     }
 }

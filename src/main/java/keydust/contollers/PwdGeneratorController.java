@@ -13,7 +13,8 @@ public class PwdGeneratorController {
         private static final String NUMB = "0123456789";
         private static final String SPEC = "!@#$%^&*()-_=+[]{}";
 
-        private static final int MIN_LENGTH = 8;
+        private static final int MIN_LENGTH = 4;
+        private  static final int MAX_LENGTH = 1024;
 
         public static String generatePassword(int length,
                                               boolean useLower,
@@ -22,7 +23,11 @@ public class PwdGeneratorController {
                                               boolean useSpec) {
 
             if (length < MIN_LENGTH ) {
-                throw new IllegalArgumentException("Pasword must be at least" + MIN_LENGTH + "characters long.");
+                throw new IllegalArgumentException("Pasword must be at least " + MIN_LENGTH + " characters long.");
+            }
+
+            if (length > MAX_LENGTH) {
+                throw new IllegalArgumentException("Pasword must be at most " + MAX_LENGTH + " characters long.");
             }
 
             StringBuilder pool = new StringBuilder();
