@@ -1,0 +1,247 @@
+
+.root {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-background-color: linear-gradient(
+        to bottom right,
+        #1b1f2a,
+        #11131a
+    );
+}
+
+.vbox {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4.7px);
+    -webkit-backdrop-filter: blur(4.7px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    -fx-background-color: rgba(255, 255, 255, 0.16);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(255, 255, 255, 0.28);
+    -fx-padding: 18;
+}
+
+.heading {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255, 255, 255, 0.75);
+}
+
+.muted {
+    -fx-text-fill: rgba(255, 255, 255, 0.55);
+    -fx-font-size: 12px;
+}
+
+.success-text {
+    -fx-text-fill: #6ee7b7;
+}
+
+.danger-text {
+    -fx-text-fill: #f87171;
+}
+
+.input-field {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4.7px);
+    -webkit-backdrop-filter: blur(4.7px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    -fx-background-color: rgba(255, 255, 255, 0.16);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(255, 255, 255, 0.28);
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.5);
+    -fx-padding: 10 12 10 12;
+}
+
+.input-field:focused {
+    -fx-border-color: rgba(255, 255, 255, 0.6);
+}
+
+.button {
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4.7px);
+    -webkit-backdrop-filter: blur(4.7px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: rgba(255, 255, 255, 0.28);
+    -fx-text-fill: white;
+    -fx-padding: 8 16 8 16;
+}
+
+.button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.22);
+}
+
+.button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.3);
+}
+
+.primary {
+    background: rgba(96, 165, 250, 0.35);
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4.7px);
+    -webkit-backdrop-filter: blur(4.7px);
+    border: 1px solid rgba(96, 165, 250, 0.6);
+
+    -fx-background-color: rgba(96, 165, 250, 0.35);
+    -fx-border-color: rgba(96, 165, 250, 0.6);
+}
+
+.primary:hover {
+    -fx-background-color: rgba(96, 165, 250, 0.5);
+}
+
+.table-view {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4.7px);
+    -webkit-backdrop-filter: blur(4.7px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
+}
+
+.table-view .column-header,
+.table-view .cell {
+    -fx-text-fill: white;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(96, 165, 250, 0.35);
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: rgba(255, 255, 255, 0.35);
+    -fx-background-radius: 8;
+}
+
+.table-view .virtual-flow {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: rgba(96, 165, 250, 0.35);
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.16);
+}
+
+table-view .column-header-background {
+    -fx-background-color: rgba(255, 255, 255, 0.16);
+    -fx-background-radius: 14 14 0 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.table-view .filler {
+    -fx-background-color: rgba(255, 255, 255, 0.16);
+}
+
+.eye-visibility {
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(4.7px);
+    -webkit-backdrop-filter: blur(4.7px);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12
+    -fx-border-color: rgba(255, 255, 255, 0.28);
+
+    -fx-min-width: 44;
+    -fx-min-height: 38;
+    -fx-padding: 6 10 6 10;
+
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+
+    -fx-cursor: hand;
+}
+
+.eye-visibility:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.22);
+}
+
+.eye-visibility:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.30);
+}
+
+.eye-visibility-on {
+    background: rgba(96, 165, 250, 0.22);
+    border: 1px solid rgba(96, 165, 250, 0.55);
+
+    -fx-background-color: rgba(96, 165, 250, 0.22);
+    -fx-border-color: rgba(96, 165, 250, 0.55);
+}
+
+.eye-visibility-on:hover {
+    -fx-background-color: rgba(96, 165, 250, 0.35);
+}
+
+.check-box {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.check-box .box {
+    background: rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(4.7px);
+    -webkit-backdrop-filter: blur(4.7px);
+    border-radius: 6px;
+
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: rgba(255, 255, 255, 0.28);
+    -fx-pref-width: 18;
+    -fx-pref-height: 18;
+}
+
+.check-box:selected .box {
+    -fx-background-color: rgba(96, 165, 250, 0.35);
+    -fx-border-color: rgba(96, 165, 250, 0.6);
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
