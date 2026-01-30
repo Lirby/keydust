@@ -10,14 +10,19 @@ permissions:
   contents: write
 
 jobs:
-  msi:
+  build-msi:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout
+      # ------------------------------------------------------------
+      # 1) Repository auschecken
+      # ------------------------------------------------------------
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # JDK 21 + JavaFX (Liberica jdk+fx)
+      # ------------------------------------------------------------
+      # 2) Java 21 + JavaFX (Liberica Full / jdk+fx)
+      # ------------------------------------------------------------
       - name: Set up JDK 21 (Liberica + JavaFX)
         uses: actions/setup-java@v4
         with:
@@ -26,30 +31,42 @@ jobs:
           java-package: jdk+fx
           cache: maven
 
-      # WiX installieren (für MSI-Erstellung mit jpackage)
+      # ------------------------------------------------------------
+      # 3) WiX Toolset installieren (MSI ist sonst unmöglich)
+      # ------------------------------------------------------------
       - name: Install WiX Toolset
+        shell: pwsh
         run: choco install wixtoolset --no-progress -y
 
-      - name: Build JAR (Maven)
+      # ------------------------------------------------------------
+      # 4) Maven Build (JAR + Shade etc.)
+      # ------------------------------------------------------------
+      - name: Build project with Maven
+        shell: pwsh
         run: mvn -B -Pwindows -DskipTests package
 
-      # MSI via jpackage bauen:
-      # Falls deine pom im Windows-Profil aktuell "--type exe" nutzt, überschreiben wir hier auf MSI.
-      - name: Build MSI (jpackage)
-        run: mvn -B -Pwindows -DskipTests -Djpackage.type=msi jpackage:jpackage
+      # ------------------------------------------------------------
+      # 5) MSI mit jpackage erzeugen
+      #    (Typ kommt aus pom.xml: <jpackage.type>msi</jpackage.type>)
+      # ------------------------------------------------------------
+      - name: Build MSI with jpackage
+        shell: pwsh
+        run: mvn -B -Pwindows -DskipTests jpackage:jpackage
 
-      # Ergebnis als Artifact hochladen (immer hilfreich, auch ohne Release)
+      # ------------------------------------------------------------
+      # 6) MSI als Artifact hochladen
+      # ------------------------------------------------------------
       - name: Upload MSI Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: KeyDust-windows-msi
+          name: KeyDust-Windows-MSI
           path: |
             dist/**/*.msi
-            dist/**/*.exe
 
-      # OPTIONAL: Wenn der Workflow durch ein Tag (vX.Y.Z) getriggert wurde,
-      # lade die MSI ins GitHub Release hoch.
-      - name: Publish to GitHub Release (tag only)
+      # ------------------------------------------------------------
+      # 7) MSI an GitHub Release anhängen (nur bei Tags)
+      # ------------------------------------------------------------
+      - name: Publish MSI to GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
